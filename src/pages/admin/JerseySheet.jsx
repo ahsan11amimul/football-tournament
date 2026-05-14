@@ -107,29 +107,26 @@ export default function JerseySheet() {
     }
   };
 
-  const exportToCSV = () => {
-    const headers = ['Name', 'Jersey Size', 'Number', 'Phone', 'Paid Amount'];
-    const rows = filteredUsers.map(u => [
-      u.fullName,
-      u.jerseySize || 'N/A',
-      u.jerseyNumber || 'N/A',
-      `'${u.phone || ''}`,
-      u.paidAmount || 0
-    ]);
+  const exportToExcel = () => {
+    import('xlsx').then(XLSX => {
+      const headers = ['Name', 'Jersey Size', 'Number', 'Phone', 'Paid Amount'];
+      const rows = filteredUsers.map(u => [
+        u.fullName || '',
+        u.jerseySize || 'N/A',
+        u.jerseyNumber || 'N/A',
+        u.phone || '',
+        u.paidAmount || 0
+      ]);
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(r => r.join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Jersey_Order_Sheet_${new Date().toLocaleDateString()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Jersey Order');
+      
+      XLSX.writeFile(workbook, `Jersey_Order_Sheet_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`);
+    }).catch(err => {
+      console.error('Failed to load xlsx package', err);
+      toast.error('Failed to export to Excel');
+    });
   };
 
   const printSheet = () => {
@@ -152,7 +149,7 @@ export default function JerseySheet() {
             <Printer className="w-4 h-4" />
             {t.printSheet}
           </Button>
-          <Button variant="outline" onClick={exportToCSV} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5">
+          <Button variant="outline" onClick={exportToExcel} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5">
             <FileDown className="w-4 h-4" />
             {t.exportExcel}
           </Button>
