@@ -7,6 +7,7 @@ import { Button } from '../../components/Button';
 import { toast } from 'react-hot-toast';
 import { Shirt, Heart, CheckCircle2, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { translations } from '../../utils/translations';
 
 export default function JerseyVoting() {
   const { user, profile, language } = useAuthStore();
