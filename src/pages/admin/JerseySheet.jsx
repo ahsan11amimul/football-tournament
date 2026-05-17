@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { toast } from 'react-hot-toast';
+import AddPlayerModal from './AddPlayerModal';
 
 import useAuthStore from '../../store/useAuthStore';
 import { translations } from '../../utils/translations';
@@ -43,6 +44,7 @@ export default function JerseySheet() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editValues, setEditValues] = useState({});
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, 'users'), orderBy('fullName', 'asc'));
@@ -153,6 +155,12 @@ export default function JerseySheet() {
             <FileDown className="w-4 h-4" />
             {t.exportExcel}
           </Button>
+          {isAdmin && (
+            <Button variant="primary" onClick={() => setIsAddModalOpen(true)} className="gap-2 shadow-lg shadow-primary/30">
+              <User size={16} />
+              Add Order
+            </Button>
+          )}
         </div>
       </div>
 
@@ -335,6 +343,12 @@ export default function JerseySheet() {
           }
         }
       `}</style>
+
+      {/* Add Order Modal */}
+      <AddPlayerModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </div>
   );
 }

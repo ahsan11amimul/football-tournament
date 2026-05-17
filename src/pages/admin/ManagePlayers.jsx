@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import EditPlayerModal from './EditPlayerModal';
+import AddPlayerModal from './AddPlayerModal';
 
 const MySwal = withReactContent(Swal);
 
@@ -35,6 +36,7 @@ export default function ManagePlayers() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingPlayer, setEditingPlayer] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
@@ -131,7 +133,7 @@ export default function ManagePlayers() {
             <FileDown className="w-4 h-4" />
             Export Order List
           </Button>
-          <Button variant="primary" className="gap-2">
+          <Button variant="primary" className="gap-2" onClick={() => setIsAddModalOpen(true)}>
             <UserPlus className="w-4 h-4" />
             Add Player
           </Button>
@@ -289,7 +291,6 @@ export default function ManagePlayers() {
         )}
       </Card>
 
-      {/* Edit Modal */}
       {editingPlayer && (
         <EditPlayerModal 
           player={editingPlayer} 
@@ -297,6 +298,12 @@ export default function ManagePlayers() {
           onClose={() => setEditingPlayer(null)} 
         />
       )}
+
+      {/* Add Modal */}
+      <AddPlayerModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </div>
   );
 }

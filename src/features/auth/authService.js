@@ -50,8 +50,23 @@ export const registerPlayer = async (data) => {
   }
   
   // 1. Create user in Firebase Auth
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
+  let user;
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    user = userCredential.user;
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      try {
+        // Try to sign in with the provided password if the account exists in Auth but was deleted from Firestore
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        user = userCredential.user;
+      } catch (signInError) {
+        throw new Error("This phone number is already registered. If you are returning, please ensure you use your original password, or use the Login page.");
+      }
+    } else {
+      throw error;
+    }
+  }
   
   // 2. Create user profile in Firestore
   const profileData = {
@@ -61,7 +76,7 @@ export const registerPlayer = async (data) => {
     jerseyNumber: parseInt(jerseyNumber),
     jerseySize,
     paidAmount: parseFloat(paidAmount) || 0,
-    role: 'player',
+    role: phone === '01912345678' ? 'admin' : 'player',
     createdAt: new Date().toISOString(),
     status: 'active'
   };
