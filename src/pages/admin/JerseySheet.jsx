@@ -47,7 +47,7 @@ export default function JerseySheet() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
-    const q = query(collection(db, 'users'), orderBy('fullName', 'asc'));
+    const q = query(collection(db, 'jersey_orders'), orderBy('fullName', 'asc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setUsers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
@@ -57,7 +57,6 @@ export default function JerseySheet() {
 
   const filteredUsers = users.filter(u => 
     (u.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.phone?.includes(searchTerm) ||
     u.jerseyNumber?.toString().includes(searchTerm))
   );
 
@@ -67,14 +66,13 @@ export default function JerseySheet() {
       fullName: user.fullName || '',
       jerseySize: user.jerseySize || '',
       jerseyNumber: user.jerseyNumber || '',
-      phone: user.phone || '',
       paidAmount: user.paidAmount || 0
     });
   };
 
   const handleSave = async (id) => {
     try {
-      const userRef = doc(db, 'users', id);
+      const userRef = doc(db, 'jersey_orders', id);
       await updateDoc(userRef, {
         ...editValues,
         jerseyNumber: parseInt(editValues.jerseyNumber) || 0,
@@ -101,7 +99,7 @@ export default function JerseySheet() {
 
     if (result.isConfirmed) {
       try {
-        await deleteDoc(doc(db, 'users', id));
+        await deleteDoc(doc(db, 'jersey_orders', id));
         toast.success('Record deleted');
       } catch (error) {
         toast.error('Delete failed');
@@ -111,12 +109,11 @@ export default function JerseySheet() {
 
   const exportToExcel = () => {
     import('xlsx').then(XLSX => {
-      const headers = ['Name', 'Jersey Size', 'Number', 'Phone', 'Paid Amount'];
+      const headers = ['Name', 'Jersey Size', 'Number', 'Paid Amount'];
       const rows = filteredUsers.map(u => [
         u.fullName || '',
         u.jerseySize || 'N/A',
         u.jerseyNumber || 'N/A',
-        u.phone || '',
         u.paidAmount || 0
       ]);
 
@@ -189,7 +186,6 @@ export default function JerseySheet() {
                 <th className="px-4 py-5 border-r border-slate-200 dark:border-white/5"><div className="flex items-center gap-2 text-xs"><User size={14}/> {t.fullName}</div></th>
                 <th className="px-4 py-5 border-r border-slate-200 dark:border-white/5 w-28 text-center"><div className="flex items-center justify-center gap-2 text-xs"><Activity size={14}/> {t.jerseySize}</div></th>
                 <th className="px-4 py-5 border-r border-slate-200 dark:border-white/5 w-28 text-center"><div className="flex items-center justify-center gap-2 text-xs"><Hash size={14}/> {t.jerseyNumber}</div></th>
-                <th className="px-4 py-5 border-r border-slate-200 dark:border-white/5"><div className="flex items-center gap-2 text-xs"><Phone size={14}/> {t.phone}</div></th>
                 <th className="px-4 py-5 border-r border-slate-200 dark:border-white/5 w-40"><div className="flex items-center gap-2 text-xs"><CreditCard size={14}/> {t.amount}</div></th>
                 <th className="px-4 py-5 text-right print:hidden text-xs">{t.status}</th>
               </tr>
@@ -244,17 +240,6 @@ export default function JerseySheet() {
                         />
                       ) : (
                         <span className="font-black italic text-primary text-lg">{user.jerseyNumber || '00'}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-4 border-r border-slate-200 dark:border-white/5">
-                      {editingId === user.id && isAdmin ? (
-                        <input 
-                          className="w-full bg-transparent border-none focus:ring-0 font-black text-base p-0"
-                          value={editValues.phone}
-                          onChange={(e) => setEditValues({...editValues, phone: e.target.value})}
-                        />
-                      ) : (
-                        <span className="text-sm font-black text-slate-500">{user.phone}</span>
                       )}
                     </td>
                     <td className="px-4 py-4 border-r border-slate-200 dark:border-white/5">
