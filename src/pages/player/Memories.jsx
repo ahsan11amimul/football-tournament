@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { Card } from '../../components/Card';
-import { Camera, Image as ImageIcon, Search } from 'lucide-react';
+import { Camera, Image as ImageIcon, Search, Share2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ShareModal from '../../components/ShareModal';
 
 export default function Memories() {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareData, setShareData] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'memories'), orderBy('createdAt', 'desc'));
@@ -18,6 +21,15 @@ export default function Memories() {
     });
     return () => unsubscribe();
   }, []);
+
+  const handleShareMemory = (memory) => {
+    setShareData({
+      title: memory.title,
+      text: `Check out this captured moment from the tournament! 📸`,
+      url: memory.imageUrl
+    });
+    setIsShareModalOpen(true);
+  };
 
   return (
     <div className="space-y-8 pb-12">
@@ -46,11 +58,23 @@ export default function Memories() {
                   alt={memory.title} 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <div className="w-full">
-                    <p className="text-white font-black text-xs uppercase tracking-widest">{memory.title}</p>
-                    <p className="text-primary text-[8px] font-bold mt-1 uppercase">
-                      {new Date(memory.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-                    </p>
+                  <div className="w-full flex items-center justify-between">
+                    <div className="truncate pr-2">
+                      <p className="text-white font-black text-xs uppercase tracking-widest truncate">{memory.title}</p>
+                      <p className="text-primary text-[8px] font-bold mt-1 uppercase">
+                        {new Date(memory.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShareMemory(memory);
+                      }}
+                      className="p-2 bg-white/10 hover:bg-primary text-white rounded-lg transition-colors border border-white/10 flex-shrink-0"
+                      title="Share Memory"
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -82,22 +106,38 @@ export default function Memories() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               className="max-w-6xl w-full flex flex-col items-center"
+              onClick={(e) => e.stopPropagation()}
             >
               <img 
                 src={selectedImage.imageUrl} 
                 alt={selectedImage.title} 
                 className="max-h-[80vh] w-auto object-contain rounded-2xl shadow-2xl shadow-primary/20"
               />
-              <div className="mt-8 text-center">
-                <h2 className="text-2xl md:text-4xl font-black text-white italic uppercase">{selectedImage.title}</h2>
-                <p className="text-primary font-bold mt-2 uppercase tracking-widest text-sm">
-                  {new Date(selectedImage.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
+              <div className="mt-8 text-center flex flex-col items-center gap-4">
+                <div>
+                  <h2 className="text-2xl md:text-4xl font-black text-white italic uppercase">{selectedImage.title}</h2>
+                  <p className="text-primary font-bold mt-2 uppercase tracking-widest text-sm">
+                    {new Date(selectedImage.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleShareMemory(selectedImage)}
+                  className="premium-button bg-primary text-white hover:opacity-90 py-2.5 px-6 rounded-2xl flex items-center gap-2 text-xs font-black uppercase tracking-wider shadow-lg shadow-primary/30"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share This Memory
+                </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        shareData={shareData}
+      />
     </div>
   );
 }

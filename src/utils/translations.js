@@ -121,6 +121,10 @@ export const translations = {
     fullNameRequired: "Full name is required",
     phoneRequired: "Phone number is required",
     minPassword: "Minimum 6 characters",
+    shareTitle: "Share to Social Media",
+    shareRoster: "Share Tournament Roster",
+    sharePlayer: "Share Player Card",
+    shareSummary: "Share Sizing Summary",
   },
   bn: {
     // Menu
@@ -244,5 +248,9 @@ export const translations = {
     fullNameRequired: "পুরো নাম দিতে হবে",
     phoneRequired: "ফোন নম্বর দিতে হবে",
     minPassword: "কমপক্ষে ৬টি অক্ষর হতে হবে",
+    shareTitle: "সোশ্যাল মিডিয়ায় শেয়ার করুন",
+    shareRoster: "টুর্নামেন্ট রোস্টার শেয়ার করুন",
+    sharePlayer: "প্লেয়ার কার্ড শেয়ার করুন",
+    shareSummary: "জার্সি অর্ডারের সারসংক্ষেপ শেয়ার করুন",
   }
 };

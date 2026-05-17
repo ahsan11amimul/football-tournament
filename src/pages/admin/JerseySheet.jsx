@@ -21,13 +21,15 @@ import {
   Phone,
   Hash,
   Activity,
-  CreditCard
+  CreditCard,
+  Share2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { toast } from 'react-hot-toast';
 import AddJerseyOrderModal from './AddJerseyOrderModal';
+import ShareModal from '../../components/ShareModal';
 
 import useAuthStore from '../../store/useAuthStore';
 import { translations } from '../../utils/translations';
@@ -45,6 +47,8 @@ export default function JerseySheet() {
   const [editingId, setEditingId] = useState(null);
   const [editValues, setEditValues] = useState({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareData, setShareData] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'jersey_orders'), orderBy('fullName', 'asc'));
@@ -132,6 +136,38 @@ export default function JerseySheet() {
     window.print();
   };
 
+  const handleShareSummary = () => {
+    const sizeCounts = {};
+    let totalJerseys = 0;
+    
+    users.forEach(u => {
+      const size = (u.jerseySize || 'N/A').toUpperCase().trim();
+      if (size) {
+        sizeCounts[size] = (sizeCounts[size] || 0) + 1;
+        totalJerseys += 1;
+      }
+    });
+
+    const sizingText = Object.entries(sizeCounts)
+      .map(([size, count]) => `${size}: ${count}`)
+      .join(', ');
+
+    const title = language === 'bn' 
+      ? `👕 জার্সি অর্ডারের সারসংক্ষেপ - ${totalJerseys} টি জার্সি`
+      : `👕 Jersey Sizing Summary - ${totalJerseys} Jerseys`;
+      
+    const textMsg = language === 'bn'
+      ? `তালোড়া বাইগুনি প্রিমিয়ার লীগ জার্সির পরিমাপের তালিকা:\n📦 মোট জার্সি: ${totalJerseys} টি\n📐 সাইজ অনুযায়ী পরিমাণ: ${sizingText || 'কোন ডেটা নেই'}\n\nপ্রস্তুতকারক ও সদস্যদের জন্য দ্রুত তথ্য!`
+      : `Talora Baiguni Premier League Jersey Sizing breakdown:\n📦 Total Orders: ${totalJerseys}\n📐 Sizing Quantities: ${sizingText || 'No orders recorded'}\n\nSent from Tournament Dashboard!`;
+
+    setShareData({
+      title: title,
+      text: textMsg,
+      url: window.location.href
+    });
+    setIsShareModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header section - hidden on print */}
@@ -143,17 +179,21 @@ export default function JerseySheet() {
           </h1>
           <p className="text-slate-500 text-sm font-bold uppercase tracking-widest mt-1">{t.excelManagement}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={printSheet} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" onClick={printSheet} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5 text-xs">
             <Printer className="w-4 h-4" />
             {t.printSheet}
           </Button>
-          <Button variant="outline" onClick={exportToExcel} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5">
+          <Button variant="outline" onClick={exportToExcel} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5 text-xs">
             <FileDown className="w-4 h-4" />
             {t.exportExcel}
           </Button>
+          <Button variant="outline" onClick={handleShareSummary} className="gap-2 border-slate-200 dark:border-white/5 bg-white dark:bg-white/5 text-xs">
+            <Share2 className="w-4 h-4 text-primary" />
+            {language === 'bn' ? 'অর্ডার সামারি' : 'Share Summary'}
+          </Button>
           {isAdmin && (
-            <Button variant="primary" onClick={() => setIsAddModalOpen(true)} className="gap-2 shadow-lg shadow-primary/30">
+            <Button variant="primary" onClick={() => setIsAddModalOpen(true)} className="gap-2 shadow-lg shadow-primary/30 text-xs">
               <User size={16} />
               Add Order
             </Button>
@@ -333,6 +373,12 @@ export default function JerseySheet() {
       <AddJerseyOrderModal 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
+      />
+
+      <ShareModal 
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        shareData={shareData}
       />
     </div>
   );
