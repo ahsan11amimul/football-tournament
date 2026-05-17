@@ -7,7 +7,7 @@ const useAuthStore = create(
       user: null,
       profile: null,
       loading: true,
-      language: localStorage.getItem('language') || 'en',
+      language: localStorage.getItem('language') || 'bn',
       setUser: (user) => set({ user }),
       setProfile: (profile) => set({ profile }),
       setLanguage: (language) => {

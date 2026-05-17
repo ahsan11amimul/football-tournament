@@ -8,10 +8,12 @@ import { Button } from '../components/Button';
 import AuthLayout from '../layouts/AuthLayout';
 import { loginWithPhone } from '../features/auth/authService';
 import useAuthStore from '../store/useAuthStore';
+import { translations } from '../utils/translations';
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
-  const { setUser, setProfile } = useAuthStore();
+  const { language, setUser, setProfile } = useAuthStore();
+  const t = translations[language] || translations['en'];
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -33,19 +35,19 @@ export default function Login() {
 
   return (
     <AuthLayout 
-      title="Welcome Back" 
-      subtitle="Login to access your player dashboard"
+      title={t.loginTitle} 
+      subtitle={t.loginSubtitle}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="relative">
           <Phone className="absolute left-3 top-10 text-slate-500 w-5 h-5" />
           <Input
-            label="Phone Number"
+            label={t.phone}
             placeholder="01XXXXXXXXX"
             className="pl-11"
             error={errors.phone?.message}
             {...register('phone', { 
-              required: 'Phone number is required'
+              required: t.phoneRequired
             })}
           />
         </div>
@@ -53,12 +55,12 @@ export default function Login() {
         <div className="relative">
           <Lock className="absolute left-3 top-10 text-slate-500 w-5 h-5" />
           <Input
-            label="Password"
+            label={t.password}
             type="password"
             placeholder="••••••••"
             className="pl-11"
             error={errors.password?.message}
-            {...register('password', { required: 'Password is required' })}
+            {...register('password', { required: t.passwordRequired })}
           />
         </div>
 
@@ -68,13 +70,13 @@ export default function Login() {
           loading={loading}
         >
           <LogIn className="w-4 h-4" />
-          Login Now
+          {t.loginBtn}
         </Button>
 
         <p className="text-center text-slate-400 text-sm mt-4">
-          Don't have an account?{' '}
+          {t.dontHaveAccount}{' '}
           <Link to="/register" className="text-primary hover:underline font-semibold">
-            Register as Player
+            {t.registerLink}
           </Link>
         </p>
       </form>

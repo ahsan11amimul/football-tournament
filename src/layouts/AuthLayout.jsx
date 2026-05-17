@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import useBrandingStore from '../store/useBrandingStore';
+import LanguageToggle from '../components/LanguageToggle';
 
 export default function AuthLayout({ children, title, subtitle }) {
   const { branding } = useBrandingStore();
@@ -9,6 +10,11 @@ export default function AuthLayout({ children, title, subtitle }) {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden" style={{ backgroundColor: 'var(--bg-color)' }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 dashboard-bg-pattern opacity-50 pointer-events-none" />
+
+      {/* Language Toggle at top right */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageToggle />
+      </div>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

@@ -8,12 +8,14 @@ import { Button } from '../components/Button';
 import AuthLayout from '../layouts/AuthLayout';
 import { registerPlayer } from '../features/auth/authService';
 import useAuthStore from '../store/useAuthStore';
+import { translations } from '../utils/translations';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export default function Register() {
   const [loading, setLoading] = useState(false);
-  const { setUser, setProfile } = useAuthStore();
+  const { language, setUser, setProfile } = useAuthStore();
+  const t = translations[language] || translations['en'];
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -36,37 +38,37 @@ export default function Register() {
 
   return (
     <AuthLayout 
-      title="Join the League" 
-      subtitle="Create your player profile today"
+      title={t.registerTitle} 
+      subtitle={t.registerSubtitle}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="Full Name"
+            label={t.fullName}
             placeholder="John Doe"
             error={errors.fullName?.message}
-            {...register('fullName', { required: 'Full name is required' })}
+            {...register('fullName', { required: t.fullNameRequired })}
           />
           <Input
-            label="Phone Number"
+            label={t.phone}
             placeholder="01XXXXXXXXX"
             error={errors.phone?.message}
-            {...register('phone', { required: 'Phone is required' })}
+            {...register('phone', { required: t.phoneRequired })}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Jersey Number"
+            label={t.jerseyNumber}
             type="number"
             placeholder="10"
             error={errors.jerseyNumber?.message}
-            {...register('jerseyNumber', { required: 'Required' })}
+            {...register('jerseyNumber', { required: t.required })}
           />
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-300 ml-1">Jersey Size</label>
+            <label className="block text-sm font-medium text-slate-300 ml-1">{t.jerseySize}</label>
             <select 
-              {...register('jerseySize', { required: 'Required' })}
+              {...register('jerseySize', { required: t.required })}
               className="premium-input w-full appearance-none"
             >
               <option value="S">S</option>
@@ -79,7 +81,7 @@ export default function Register() {
         </div>
 
         <Input
-          label="Paid Amount (Optional)"
+          label={t.paidAmountLabel}
           type="number"
           placeholder="500"
           error={errors.paidAmount?.message}
@@ -87,13 +89,13 @@ export default function Register() {
         />
 
         <Input
-          label="Password"
+          label={t.password}
           type="password"
           placeholder="••••••••"
           error={errors.password?.message}
           {...register('password', { 
-            required: 'Password is required',
-            minLength: { value: 6, message: 'Minimum 6 characters' }
+            required: t.passwordRequired,
+            minLength: { value: 6, message: t.minPassword }
           })}
         />
 
@@ -103,13 +105,13 @@ export default function Register() {
           loading={loading}
         >
           <UserPlus className="w-4 h-4" />
-          Create Profile
+          {t.registerBtn}
         </Button>
 
         <p className="text-center text-slate-400 text-sm mt-4">
-          Already have an account?{' '}
+          {t.alreadyHaveAccount}{' '}
           <Link to="/login" className="text-primary hover:underline font-semibold">
-            Login
+            {t.loginLink}
           </Link>
         </p>
       </form>

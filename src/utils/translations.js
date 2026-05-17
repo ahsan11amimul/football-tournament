@@ -102,6 +102,25 @@ export const translations = {
     // Branding
     tournamentName: "Talora Baiguni Premier League",
     sponsor: "Sponsored by Torun Somaj",
+
+    // Auth (Login & Register)
+    loginTitle: "Welcome Back",
+    loginSubtitle: "Login to access your player dashboard",
+    registerTitle: "Join the League",
+    registerSubtitle: "Create your player profile today",
+    loginBtn: "Login Now",
+    registerBtn: "Create Profile",
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: "Already have an account?",
+    registerLink: "Register as Player",
+    loginLink: "Login",
+    password: "Password",
+    optional: "Optional",
+    paidAmountLabel: "Paid Amount",
+    passwordRequired: "Password is required",
+    fullNameRequired: "Full name is required",
+    phoneRequired: "Phone number is required",
+    minPassword: "Minimum 6 characters",
   },
   bn: {
     // Menu
@@ -206,5 +225,24 @@ export const translations = {
     // Branding
     tournamentName: "তালোড়া বাইগুনি প্রিমিয়ার লীগ",
     sponsor: "সৌজন্যে: তরুণ সমাজ",
+
+    // Auth (Login & Register)
+    loginTitle: "স্বাগতম",
+    loginSubtitle: "আপনার প্লেয়ার ড্যাশবোর্ডে লগইন করুন",
+    registerTitle: "লীগে যোগ দিন",
+    registerSubtitle: "আজই আপনার খেলোয়াড় প্রোফাইল তৈরি করুন",
+    loginBtn: "লগইন করুন",
+    registerBtn: "প্রোফাইল তৈরি করুন",
+    dontHaveAccount: "অ্যাকাউন্ট নেই?",
+    alreadyHaveAccount: "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?",
+    registerLink: "প্লেয়ার হিসেবে রেজিস্টার করুন",
+    loginLink: "লগইন",
+    password: "পাসওয়ার্ড",
+    optional: "ঐচ্ছিক",
+    paidAmountLabel: "পরিশোধিত টাকা (ঐচ্ছিক)",
+    passwordRequired: "পাসওয়ার্ড দিতে হবে",
+    fullNameRequired: "পুরো নাম দিতে হবে",
+    phoneRequired: "ফোন নম্বর দিতে হবে",
+    minPassword: "কমপক্ষে ৬টি অক্ষর হতে হবে",
   }
 };
