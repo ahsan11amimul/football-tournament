@@ -27,7 +27,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { toast } from 'react-hot-toast';
-import AddPlayerModal from './AddPlayerModal';
+import AddJerseyOrderModal from './AddJerseyOrderModal';
 
 import useAuthStore from '../../store/useAuthStore';
 import { translations } from '../../utils/translations';
@@ -330,7 +330,7 @@ export default function JerseySheet() {
       `}</style>
 
       {/* Add Order Modal */}
-      <AddPlayerModal 
+      <AddJerseyOrderModal 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
       />
